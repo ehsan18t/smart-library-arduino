@@ -175,7 +175,7 @@ uint8_t getFingerprintEnroll() {
       Serial.println("Image taken");
       break;
     case FINGERPRINT_NOFINGER:
-      Serial.println(".");
+      Serial.print("");
       break;
     case FINGERPRINT_PACKETRECIEVEERR:
       Serial.println("Communication error");
