@@ -19,9 +19,11 @@ SoftwareSerial mySerial(2, 3);
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 uint8_t id;
+uint8_t matched;
 
 void setup()
 {
+  matched = 0;
   Serial.begin(9600);
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
   delay(100);
@@ -52,7 +54,11 @@ void loop()                     // run over and over again
 {
   clear();
   enroll();
-  verify();
+  while (matched == 0)
+  {
+    verify();
+  }
+  matched = 0;
 }
 
 void clear()
@@ -76,7 +82,7 @@ void enroll()
 void verify()
 {
   getFingerprintID();
-  delay(50); 
+  delay(50);
 }
 
 
@@ -128,6 +134,7 @@ uint8_t getFingerprintID() {
   p = finger.fingerSearch();
   if (p == FINGERPRINT_OK) {
     Serial.println("Found a print match!");
+    matched= 1;
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
     return p;
