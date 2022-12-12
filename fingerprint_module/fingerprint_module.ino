@@ -20,9 +20,13 @@ Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 uint8_t id;
 uint8_t matched;
+uint8_t led1 = 12;
+uint8_t led2 = 11;
+uint8_t led3 = 10;
 
 void setup()
 {
+  pinMode(led1, OUTPUT);
   matched = 0;
   Serial.begin(9600);
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
@@ -52,12 +56,17 @@ void setup()
 
 void loop()                     // run over and over again
 {
+  delay(1000);
   clear();
+  digitalWrite(led1, LOW);
+  digitalWrite(led3, LOW);
+  Serial.println("Enter Fingerprint to Unlock");
   enroll();
   while (matched == 0)
   {
     verify();
   }
+  digitalWrite(led1, HIGH);
   matched = 0;
 }
 
@@ -93,7 +102,7 @@ uint8_t getFingerprintID() {
       Serial.println("Image taken");
       break;
     case FINGERPRINT_NOFINGER:
-      Serial.println("No finger detected");
+      // Serial.println("No finger detected");
       return p;
     case FINGERPRINT_PACKETRECIEVEERR:
       Serial.println("Communication error");
@@ -140,6 +149,9 @@ uint8_t getFingerprintID() {
     return p;
   } else if (p == FINGERPRINT_NOTFOUND) {
     Serial.println("Did not find a match");
+    digitalWrite(led2, HIGH);
+    delay(1000);
+    digitalWrite(led2, LOW);
     return p;
   } else {
     Serial.println("Unknown error");
@@ -295,6 +307,7 @@ uint8_t getFingerprintEnroll() {
   p = finger.storeModel(id);
   if (p == FINGERPRINT_OK) {
     Serial.println("Stored!");
+    digitalWrite(led3, HIGH);
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
     return p;
