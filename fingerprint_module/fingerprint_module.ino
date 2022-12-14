@@ -80,18 +80,10 @@ void setup()
 //////////
 void loop() // run over and over again
 {
+  clear();  // Clear the database
+  enroll(); // Enroll a fingerprint
+  verify(); // Verify a fingerprint
   delay(1000);
-  clear();
-  turn_off_led1();
-  turn_off_led3();
-  Serial.println("Enter Fingerprint to Unlock");
-  enroll();
-  while (matched == 0)
-  {
-    verify();
-  }
-  turn_on_led1();
-  matched = 0;
 }
 
 ///////////////////////
@@ -99,51 +91,38 @@ void loop() // run over and over again
 //////////////////////
 void clear()
 {
+  matched = 0;
   finger.emptyDatabase();
+  turn_off_led3();
   Serial.println("Now database is empty :)");
 }
 
 void enroll()
 {
-  Serial.println("Ready to enroll a fingerprint!");
+  // Serial.println("Ready to enroll a fingerprint!");
 
-  Serial.print("Enrolling ID #");
-  Serial.println(id);
+  // Serial.print("Enrolling ID #");
+  // Serial.println(id);
 
+  Serial.println("Enter Fingerprint to Register");
   while (!getFingerprintEnroll())
     ;
 }
 
 void verify()
 {
-  getFingerprintID();
-  delay(50);
+  Serial.println("Enter Fingerprint to Unlock");
+  while (matched == 0)
+  {
+    getFingerprintID();
+    delay(50);
+  }
 }
 
 ///////////////////////////
 // LED Control Functions //
 ///////////////////////////
-void blink_led1()
-{
-  digitalWrite(led1, HIGH);
-  delay(1000);
-  digitalWrite(led1, LOW);
-}
-
-void blink_led2()
-{
-  digitalWrite(led2, HIGH);
-  delay(1000);
-  digitalWrite(led2, LOW);
-}
-
-void blink_led3()
-{
-  digitalWrite(led3, HIGH);
-  delay(1000);
-  digitalWrite(led3, LOW);
-}
-
+// LED 1 (FingerPrint matched)
 void turn_on_led1()
 {
   digitalWrite(led1, HIGH);
@@ -154,6 +133,22 @@ void turn_off_led1()
   digitalWrite(led1, LOW);
 }
 
+void blink_led1()
+{
+  turn_on_led1();
+  delay(1000);
+  turn_off_led1();
+}
+
+// LED 2 (FingerPrint not matched)
+void blink_led2()
+{
+  digitalWrite(led2, HIGH);
+  delay(1000);
+  digitalWrite(led2, LOW);
+}
+
+// LED 3 (FingerPrint enrolled)
 void turn_on_led3()
 {
   digitalWrite(led3, HIGH);
@@ -162,6 +157,13 @@ void turn_on_led3()
 void turn_off_led3()
 {
   digitalWrite(led3, LOW);
+}
+
+void blink_led3()
+{
+  turn_on_led3();
+  delay(1000);
+  turn_off_led3();
 }
 
 ///////////////////////////////////////
@@ -219,7 +221,8 @@ uint8_t getFingerprintID()
   if (p == FINGERPRINT_OK)
   {
     Serial.println("Found a print match!");
-    matched = 1; // modified
+    blink_led1(); // modified
+    matched = 1;  // modified
   }
   else if (p == FINGERPRINT_PACKETRECIEVEERR)
   {
