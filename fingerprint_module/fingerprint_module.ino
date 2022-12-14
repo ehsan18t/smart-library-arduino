@@ -92,6 +92,7 @@ void loop() // run over and over again
 void clear()
 {
   matched = 0;
+  tries_on_enroll = 0;
   finger.emptyDatabase();
   turn_off_led3();
   Serial.println("Now database is empty :)");
@@ -110,13 +111,18 @@ void enroll()
 }
 
 void verify()
-{
-  Serial.println("Enter Fingerprint to Unlock");
-  while (matched == 0)
+{  
+  if (tries_on_enroll < 1)
   {
-    getFingerprintID();
-    delay(50);
+    Serial.println("Enter Fingerprint to Unlock");
+    while (matched == 0)
+    {
+      getFingerprintID();
+      delay(50);
+    }
   }
+  else
+    clear();
 }
 
 ///////////////////////////
@@ -389,12 +395,7 @@ uint8_t getFingerprintEnroll()
      * That means if you are trying to enroll your finger and it's not matching more than 3 times
      * then it will reset the fingerprint sensor and you can try again.
      */
-    tries_on_enroll = tries_on_enroll + 1; // modified
-    if (tries_on_enroll > 3)
-    {
-      clear();             // modified
-      tries_on_enroll = 0; // modified
-    }
+    tries_on_enroll++; // modified
     return p;
   }
   else
