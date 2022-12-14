@@ -81,21 +81,62 @@ void loop() // run over and over again
 {
   delay(1000);
   clear();
-  digitalWrite(led1, LOW);
-  digitalWrite(led3, LOW);
+  turn_off_led1();
+  turn_off_led3();
   Serial.println("Enter Fingerprint to Unlock");
   enroll();
   while (matched == 0)
   {
     verify();
   }
-  digitalWrite(led1, HIGH);
+  turn_on_led1();
   matched = 0;
 }
 
 ///////////////////////
 // Custom Functions //
 //////////////////////
+void blink_led1()
+{
+  digitalWrite(led1, HIGH);
+  delay(1000);
+  digitalWrite(led1, LOW);
+}
+
+void blink_led2()
+{
+  digitalWrite(led2, HIGH);
+  delay(1000);
+  digitalWrite(led2, LOW);
+}
+
+void blink_led3()
+{
+  digitalWrite(led3, HIGH);
+  delay(1000);
+  digitalWrite(led3, LOW);
+}
+
+void turn_on_led1()
+{
+  digitalWrite(led1, HIGH);
+}
+
+void turn_off_led1()
+{
+  digitalWrite(led1, LOW);
+}
+
+void turn_on_led3()
+{
+  digitalWrite(led3, HIGH);
+}
+
+void turn_off_led3()
+{
+  digitalWrite(led3, LOW);
+}
+
 void clear()
 {
   finger.emptyDatabase();
@@ -175,7 +216,7 @@ uint8_t getFingerprintID()
   if (p == FINGERPRINT_OK)
   {
     Serial.println("Found a print match!");
-    matched = 1;
+    matched = 1; // modified
   }
   else if (p == FINGERPRINT_PACKETRECIEVEERR)
   {
@@ -185,9 +226,7 @@ uint8_t getFingerprintID()
   else if (p == FINGERPRINT_NOTFOUND)
   {
     Serial.println("Did not find a match");
-    digitalWrite(led2, HIGH);
-    delay(1000);
-    digitalWrite(led2, LOW);
+    blink_led2(); // modified
     return p;
   }
   else
@@ -202,32 +241,6 @@ uint8_t getFingerprintID()
   Serial.print(" with confidence of ");
   Serial.println(finger.confidence);
 
-  return finger.fingerID;
-}
-
-///////////////////////////////////////
-// Pre-defined Functions (Untouched) //
-///////////////////////////////////////
-// returns -1 if failed, otherwise returns ID #
-int getFingerprintIDez()
-{
-  uint8_t p = finger.getImage();
-  if (p != FINGERPRINT_OK)
-    return -1;
-
-  p = finger.image2Tz();
-  if (p != FINGERPRINT_OK)
-    return -1;
-
-  p = finger.fingerFastSearch();
-  if (p != FINGERPRINT_OK)
-    return -1;
-
-  // found a match!
-  Serial.print("Found ID #");
-  Serial.print(finger.fingerID);
-  Serial.print(" with confidence of ");
-  Serial.println(finger.confidence);
   return finger.fingerID;
 }
 
@@ -375,7 +388,7 @@ uint8_t getFingerprintEnroll()
   if (p == FINGERPRINT_OK)
   {
     Serial.println("Stored!");
-    digitalWrite(led3, HIGH);
+    turn_on_led3(); // modified
   }
   else if (p == FINGERPRINT_PACKETRECIEVEERR)
   {
@@ -399,4 +412,31 @@ uint8_t getFingerprintEnroll()
   }
 
   return true;
+}
+
+///////////////////////////////////////
+// Pre-defined Functions (Untouched) //
+///////////////////////////////////////
+// returns -1 if failed, otherwise returns ID #
+// used in getFingerprintID()
+int getFingerprintIDez()
+{
+  uint8_t p = finger.getImage();
+  if (p != FINGERPRINT_OK)
+    return -1;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK)
+    return -1;
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK)
+    return -1;
+
+  // found a match!
+  Serial.print("Found ID #");
+  Serial.print(finger.fingerID);
+  Serial.print(" with confidence of ");
+  Serial.println(finger.confidence);
+  return finger.fingerID;
 }
