@@ -111,7 +111,7 @@ void enroll()
 }
 
 void verify()
-{  
+{
   if (tries_on_enroll < 1)
   {
     Serial.println("Enter Fingerprint to Unlock");
