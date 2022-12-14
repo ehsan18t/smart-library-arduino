@@ -3,13 +3,15 @@ uint8_t sound = A5;
 int threshold = 47;
 uint8_t state = 0;
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   pinMode(led, OUTPUT);
   pinMode(sound, INPUT);
 }
 
-void loop() {
+void loop()
+{
 
   uint8_t soundses = analogRead(sound);
   if (soundses >= threshold)
