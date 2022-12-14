@@ -14,20 +14,26 @@ SoftwareSerial mySerial(2, 3);
 
 #endif
 
+///////////////////////
+// Global Variables //
+//////////////////////
+
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 uint8_t id;
-uint8_t matched;
+uint8_t matched = 0;
 uint8_t led1 = 12;
 uint8_t led2 = 11;
 uint8_t led3 = 10;
 
+///////////
+// Setup //
+///////////
 void setup()
 {
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led3, OUTPUT);
-  matched = 0;
   Serial.begin(9600);
   while (!Serial)
     ; // For Yun/Leo/Micro/Zero/...
@@ -68,6 +74,9 @@ void setup()
   Serial.println(finger.baud_rate);
 }
 
+//////////
+// Loop //
+//////////
 void loop() // run over and over again
 {
   delay(1000);
@@ -84,6 +93,9 @@ void loop() // run over and over again
   matched = 0;
 }
 
+///////////////////////
+// Custom Functions //
+//////////////////////
 void clear()
 {
   finger.emptyDatabase();
@@ -108,6 +120,9 @@ void verify()
   delay(50);
 }
 
+///////////////////////////////////////
+// Pre-defined Functions (Modified) //
+///////////////////////////////////////
 uint8_t getFingerprintID()
 {
   uint8_t p = finger.getImage();
@@ -190,6 +205,9 @@ uint8_t getFingerprintID()
   return finger.fingerID;
 }
 
+///////////////////////////////////////
+// Pre-defined Functions (Untouched) //
+///////////////////////////////////////
 // returns -1 if failed, otherwise returns ID #
 int getFingerprintIDez()
 {
