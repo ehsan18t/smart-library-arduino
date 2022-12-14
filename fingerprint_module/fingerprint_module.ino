@@ -20,11 +20,11 @@ SoftwareSerial mySerial(2, 3);
 
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
-uint8_t id;
+uint8_t id = 1;
 uint8_t matched = 0;
-uint8_t led1 = 12;
-uint8_t led2 = 11;
-uint8_t led3 = 10;
+uint8_t led1 = 12; // FingerPrint matched
+uint8_t led2 = 11; // FingerPrint not matched
+uint8_t led3 = 10; // FingerPrint enrolled
 uint8_t tries_on_enroll = 0;
 
 ///////////
@@ -106,7 +106,6 @@ void clear()
 void enroll()
 {
   Serial.println("Ready to enroll a fingerprint!");
-  id = 1;
 
   Serial.print("Enrolling ID #");
   Serial.println(id);
