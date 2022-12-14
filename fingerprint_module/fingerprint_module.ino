@@ -231,6 +231,7 @@ uint8_t getFingerprintID()
   else if (p == FINGERPRINT_PACKETRECIEVEERR)
   {
     Serial.println("Communication error");
+    blink_led2(); // modified
     return p;
   }
   else if (p == FINGERPRINT_NOTFOUND)
@@ -242,6 +243,7 @@ uint8_t getFingerprintID()
   else
   {
     Serial.println("Unknown error");
+    blink_led2(); // modified
     return p;
   }
 
