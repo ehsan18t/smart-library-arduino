@@ -96,6 +96,33 @@ void loop() // run over and over again
 ///////////////////////
 // Custom Functions //
 //////////////////////
+void clear()
+{
+  finger.emptyDatabase();
+  Serial.println("Now database is empty :)");
+}
+
+void enroll()
+{
+  Serial.println("Ready to enroll a fingerprint!");
+  id = 1;
+
+  Serial.print("Enrolling ID #");
+  Serial.println(id);
+
+  while (!getFingerprintEnroll())
+    ;
+}
+
+void verify()
+{
+  getFingerprintID();
+  delay(50);
+}
+
+///////////////////////////
+// LED Control Functions //
+///////////////////////////
 void blink_led1()
 {
   digitalWrite(led1, HIGH);
@@ -135,30 +162,6 @@ void turn_on_led3()
 void turn_off_led3()
 {
   digitalWrite(led3, LOW);
-}
-
-void clear()
-{
-  finger.emptyDatabase();
-  Serial.println("Now database is empty :)");
-}
-
-void enroll()
-{
-  Serial.println("Ready to enroll a fingerprint!");
-  id = 1;
-
-  Serial.print("Enrolling ID #");
-  Serial.println(id);
-
-  while (!getFingerprintEnroll())
-    ;
-}
-
-void verify()
-{
-  getFingerprintID();
-  delay(50);
 }
 
 ///////////////////////////////////////
