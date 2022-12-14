@@ -25,6 +25,7 @@ uint8_t matched = 0;
 uint8_t led1 = 12;
 uint8_t led2 = 11;
 uint8_t led3 = 10;
+uint8_t tries_on_enroll = 0;
 
 ///////////
 // Setup //
@@ -377,6 +378,21 @@ uint8_t getFingerprintEnroll()
   else if (p == FINGERPRINT_ENROLLMISMATCH)
   {
     Serial.println("Fingerprints did not match");
+
+    /*
+     * It's long story. Rahat tried to enroll his finger and on enroll his fingerprint
+     * wasn't matching no matter how many time he tried. So I am adding auto reset feature
+     * on 3rd wrong match on enroll.
+     *
+     * That means if you are trying to enroll your finger and it's not matching more than 3 times
+     * then it will reset the fingerprint sensor and you can try again.
+     */
+    tries_on_enroll = tries_on_enroll + 1; // modified
+    if (tries_on_enroll > 3)
+    {
+      clear();             // modified
+      tries_on_enroll = 0; // modified
+    }
     return p;
   }
   else
