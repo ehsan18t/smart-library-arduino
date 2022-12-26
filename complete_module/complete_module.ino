@@ -44,7 +44,7 @@ uint8_t ir_front_in_pin = 7;
 uint8_t ir_back_in_pin = 6;
 
 // Push Button
-uint8_t pb_in = 1
+uint8_t pb_in = 1;
 
 
 
