@@ -189,6 +189,8 @@ void verify()
       delay(50);
     }
   }
+  else
+    blink_led3();
 }
 
 ///////////////////////////
