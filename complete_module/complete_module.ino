@@ -44,7 +44,7 @@ uint8_t ir_front_in_pin = 7;
 uint8_t ir_back_in_pin = 6;
 
 // Push Button
-uint8_t pb_in = 4;
+uint8_t pb_in = 5;
 
 
 
@@ -122,6 +122,12 @@ void loop() // run over and over again
 
 // Motor
 
+void off()
+{
+  digitalWrite(lpwm, LOW);
+  digitalWrite(rpwm, LOW);
+}
+
 void right()
 {
   digitalWrite(lpwm, LOW);
@@ -152,30 +158,51 @@ void enroll()
   while (!enroll_val)
   {
     enroll_val = getFingerprintEnroll();
-    if (digitalRead(pb_in) == HIGH)
-    {
-      delay(500);
-      uint8_t rotation = digitalRead(ir_back_in_pin) == LOW ? 1 : 2;   // 1 = right, 2 = left
-      uint8_t run_motor = 1;
-      if (rotation == 1)
-      {
-        while(run_motor)
-        {
-            // while HIGH motor need to rotate to reach dest
-            run_motor = digitalRead(ir_front_in_pin) == HIGH;
-            right();
-        }
-      }
-      else
-      {
-        while(run_motor)
-        {
-            run_motor = digitalRead(ir_back_in_pin) == HIGH;
-            left();
-        }
-      }
-    }
+    // if (digitalRead(pb_in) == HIGH)
+    // {
+    //   delay(500);
+    //   uint8_t rotation = digitalRead(ir_back_in_pin) == LOW ? 1 : 2;   // 1 = right, 2 = left
+    //   uint8_t run_motor = 1;
+    //   if (rotation == 1)
+    //   {
+    //     while(run_motor)
+    //     {
+    //         // while HIGH motor need to rotate to reach dest
+    //         run_motor = digitalRead(ir_front_in_pin) == LOW;
+    //         right();
+    //     }
+    //   }
+    //   else
+    //   {
+    //     while(run_motor)
+    //     {
+    //         run_motor = digitalRead(ir_back_in_pin) == HIGH;
+    //         left();
+    //     }
+    //   }
+    // }
   }
+  
+  uint8_t run_motor = 1;
+  while(run_motor)
+  {
+      // while HIGH motor need to rotate to reach dest
+      run_motor = digitalRead(ir_front_in_pin) == HIGH;
+      left();
+      delay(100);
+  }
+  off();
+  delay(5000);
+  run_motor = 1;
+  while(run_motor)
+  {
+      // while HIGH motor need to rotate to 
+      run_motor = digitalRead(ir_back_in_pin) == HIGH;
+      right();
+      delay(100);
+  }
+  off();
+  
 }
 
 void verify()
@@ -188,6 +215,27 @@ void verify()
       getFingerprintID();
       delay(50);
     }
+
+  
+  uint8_t run_motor = 1;
+  while(run_motor)
+  {
+      // while HIGH motor need to rotate to reach dest
+      run_motor = digitalRead(ir_front_in_pin) == HIGH;
+      left();
+      delay(100);
+  }
+  off();
+  delay(5000);
+  run_motor = 1;
+  while(run_motor)
+  {
+      // while HIGH motor need to rotate to 
+      run_motor = digitalRead(ir_back_in_pin) == HIGH;
+      right();
+      delay(100);
+  }
+  off();
   }
   else
     blink_led3();
