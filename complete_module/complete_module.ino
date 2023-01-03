@@ -1,4 +1,6 @@
 #include <Adafruit_Fingerprint.h>
+#include<NewPing.h>
+
 
 #if (defined(__AVR__) || defined(ESP8266)) && !defined(__AVR_ATmega2560__)
 // For UNO and others without hardware serial, we must use software serial...
@@ -14,16 +16,6 @@ SoftwareSerial mySerial(2, 3);
 
 #endif
 
-///////////////////////
-// Global Variables //
-//////////////////////
-
-Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
-
-// Variables
-uint8_t id = 1;
-uint8_t matched = 0;
-uint8_t tries_on_enroll = 0;
 
 ///////////
 // Pins //
@@ -46,6 +38,29 @@ uint8_t ir_back_in_pin = 6;
 // Push Button
 uint8_t pb_in = 5;
 
+// Sonar Sensor
+int trigPin = A0;
+int echoPin = A1;
+
+
+///////////////////////
+// Global Variables //
+//////////////////////
+
+// Fingerprint
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+uint8_t id = 1;
+uint8_t matched = 0;
+uint8_t tries_on_enroll = 0;
+
+// Sonar
+int max_distance = 500;
+int dist = 0;
+int end_dist = 26;
+NewPing sonar(trigPin, echoPin,max_distance);
+
+// Motor
+int motor_duration = 5000;
 
 
 ///////////
@@ -112,8 +127,14 @@ void loop() // run over and over again
 {
   clear();  // Clear the database
   enroll(); // Enroll a fingerprint
-  verify(); // Verify a fingerprint
-  delay(1000);
+  
+  // if locker is empty clear db
+  dist = sonar.ping_cm();
+  Serial.println(dist);
+  if (dist < end_dist)
+    verify(); // Verify a fingerprint
+
+  delay(100);
 }
 
 ///////////////////////
@@ -192,7 +213,7 @@ void enroll()
       delay(100);
   }
   off();
-  delay(5000);
+  delay(motor_duration);
   run_motor = 1;
   while(run_motor)
   {
@@ -201,8 +222,7 @@ void enroll()
       right();
       delay(100);
   }
-  off();
-  
+  off(); 
 }
 
 void verify()
@@ -226,7 +246,7 @@ void verify()
       delay(100);
   }
   off();
-  delay(5000);
+  delay(motor_duration);
   run_motor = 1;
   while(run_motor)
   {
